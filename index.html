@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sports Streams - Ultra Fast Player</title>
+    <title>Series Streams - Ultra Fast Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -131,29 +131,78 @@
             border: none;
         }
 
-        .streams-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+        /* New Series Selection Styles */
+        .series-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .stream-card {
-            background: rgba(255, 255, 255, 0.03);
+        .series-category {
+            background: rgba(15, 23, 42, 0.5);
             border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .season-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .season-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .season-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .season-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+        }
+
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .episode-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.05);
             position: relative;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(10px);
             animation: fadeInUp 0.5s forwards;
         }
-
-        .stream-card:nth-child(odd) { animation-delay: 0.1s; }
-        .stream-card:nth-child(even) { animation-delay: 0.2s; }
 
         @keyframes fadeInUp {
             to {
@@ -162,94 +211,62 @@
             }
         }
 
-        .stream-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        .episode-card:nth-child(odd) { animation-delay: 0.1s; }
+        .episode-card:nth-child(even) { animation-delay: 0.2s; }
+
+        .episode-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: rgba(255, 255, 255, 0.05);
             border-color: rgba(0, 180, 219, 0.3);
         }
 
-        .stream-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--primary);
+        .episode-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-
-        .stream-icon {
-            font-size: 3rem;
-            padding: 25px;
+            padding: 8px;
             text-align: center;
-            background: linear-gradient(135deg, rgba(0, 131, 176, 0.1), rgba(0, 180, 219, 0.05));
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stream-icon::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
-        }
-
-        .stream-info {
-            padding: 20px;
-        }
-
-        .stream-name {
-            font-size: 1.4rem;
             font-weight: 700;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-size: 0.9rem;
         }
 
-        .stream-type {
-            display: inline-block;
-            background: rgba(0, 180, 219, 0.15);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--secondary);
+        .episode-info {
+            padding: 15px;
+        }
+
+        .episode-name {
+            font-size: 1rem;
             font-weight: 600;
+            margin-bottom: 5px;
+            text-align: center;
         }
 
-        .stream-meta {
+        .episode-meta {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--gray);
+            margin-top: 8px;
         }
 
-        .stream-play-btn {
+        .episode-play-btn {
             display: block;
             width: 100%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             text-align: center;
-            padding: 15px;
+            padding: 10px;
             border: none;
-            border-radius: 0 0 16px 16px;
-            font-weight: 700;
-            font-size: 1rem;
+            border-radius: 0 0 12px 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .stream-play-btn::before {
+        .episode-play-btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -260,11 +277,11 @@
             transition: 0.5s;
         }
 
-        .stream-play-btn:hover {
+        .episode-play-btn:hover {
             background: linear-gradient(135deg, var(--secondary), var(--primary));
         }
 
-        .stream-play-btn:hover::before {
+        .episode-play-btn:hover::before {
             left: 100%;
         }
 
@@ -417,17 +434,6 @@
             font-weight: 600;
         }
 
-        .no-streams {
-            text-align: center;
-            padding: 60px;
-            font-size: 1.3rem;
-            color: var(--gray);
-            grid-column: 1 / -1;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 16px;
-            border: 1px dashed rgba(255, 255, 255, 0.1);
-        }
-
         .connection-status {
             position: fixed;
             top: 20px;
@@ -470,8 +476,8 @@
         }
 
         @media (max-width: 1200px) {
-            .streams-grid {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            .episodes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
         }
 
@@ -480,9 +486,9 @@
                 font-size: 2.2rem;
             }
            
-            .streams-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 20px;
+            .episodes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
             }
            
             .player-header {
@@ -492,11 +498,15 @@
             .player-title {
                 font-size: 1.2rem;
             }
+           
+            .season-selector {
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
-            .streams-grid {
-                grid-template-columns: 1fr;
+            .episodes-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
            
             h1 {
@@ -511,6 +521,10 @@
                 padding: 8px 15px;
                 font-size: 0.8rem;
             }
+           
+            .category-title {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -519,13 +533,13 @@
    
     <div class="container">
         <header>
-            <h1><i class="fas fa-bolt"></i>Ocean of movies 📺 </h1>
-            <p class="subtitle">Optimized for instant loading with CDN acceleration, adaptive streaming, and intelligent caching. Streams load in the background for instant playback.</p>
+            <h1><i class="fas fa-film"></i> Ocean of Series 📺 </h1>
+            <p class="subtitle">Browse your favorite series, select seasons and episodes. Optimized for instant loading with CDN acceleration and adaptive streaming.</p>
            
             <div class="stats-bar">
                 <div class="stat-item">
-                    <i class="fas fa-bolt"></i>
-                    <span>Streams: <span id="streamCount">0</span></span>
+                    <i class="fas fa-film"></i>
+                    <span>Series: <span id="seriesCount">0</span></span>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-tachometer-alt"></i>
@@ -543,28 +557,22 @@
         </header>
 
         <div class="filters">
-            <button class="filter-btn active" data-filter="all">
-                <i class="fas fa-tv"></i> ALL SERIES
+            <button class="filter-btn active" data-series="dexter">
+                <i class="fas fa-tv"></i> DEXTER
             </button>
-            <button class="filter-btn" data-filter="sports">
-                <i class="fas fa-tv"></i> DEXTER 1-8
+            <button class="filter-btn" data-series="night_manager">
+                <i class="fas fa-tv"></i> NIGHT MANAGER
             </button>
-            <button class="filter-btn" data-filter="MAN VS BABY">
-                <i class="fas fa-tv"></i> MAN VS BABY
+            <button class="filter-btn" data-series="breaking_bad">
+                <i class="fas fa-tv"></i> BREAKING BAD
             </button>
-            <button class="filter-btn" data-filter="tennis">
-                <i class="fas fa-tv"></i>
-            </button>
-            <button class="filter-btn" data-filter="f1">
-                <i class="fas fa-tv"></i>
-            </button>
-            <button class="filter-btn" data-filter="football">
-                <i class="fas fa-tv"></i>
+            <button class="filter-btn" data-series="game_of_thrones">
+                <i class="fas fa-tv"></i> GAME OF THRONES
             </button>
         </div>
 
-        <div class="streams-grid" id="streamsContainer">
-            <!-- Stream cards will be dynamically inserted here -->
+        <div class="series-selection" id="seriesContainer">
+            <!-- Series, seasons and episodes will be dynamically inserted here -->
         </div>
 
         <div class="stream-notice">
@@ -575,14 +583,14 @@
         </div>
 
         <footer>
-            <p>© 2024 UltraFast Sports Streams • Performance-Optimized Streaming Platform • All streams from verified sources</p>
+            <p>© 2024 UltraFast Series Streams • Performance-Optimized Streaming Platform • All streams from verified sources</p>
         </footer>
     </div>
 
     <!-- Full-screen player -->
     <div class="fullscreen-player" id="fullscreenPlayer">
         <div class="player-header">
-            <div class="player-title" id="playerTitle">UltraFast Stream Player</div>
+            <div class="player-title" id="playerTitle">UltraFast Series Player</div>
             <div class="player-controls">
                 <button class="player-btn" id="refreshStream" title="Refresh Stream">
                     <i class="fas fa-redo"></i>
@@ -617,156 +625,225 @@
         let activeStreams = 0;
         let connectionTested = false;
 
-        // Stream data with optimized URLs and CDN alternatives
-        const streams = [
-            {
-                id: 2,
-                name: "S01E01",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f15.megacdn.co:2228/v3-hls-playback/147398c39dd0b7b8c82eec850485a291d323dd5daa584bb6d0affd537d2a9d60e6d12750dcdb961f523712b763693077b655e2ea68f3e71b883236c87553374eecdd1b74b2599b6281a722b3f76d4036683dc17b5633e4a8f80d61eb4a1f5544b681a97da320b1fb1a24393590bc0373d7c5c51fcd191002f96bfb526432db743912c9d8a76147b26bb57d1b675e5f039f63b25874bb7e6e5049e86428b144f94e10ee2e7faf664a78ed5ef3e21998e00277b641977fc4ff5a39655eea801cc1/1080/index.m3u8",
-                backupUrls: [
-                   
-                ],
-                optimized: true
+        // Series data organized by series -> seasons -> episodes
+        const seriesData = {
+            dexter: {
+                name: "DEXTER",
+                icon: "🔪",
+                seasons: {
+                    1: {
+                        episodes: [
+                            {
+                                id: 1,
+                                name: "S01E01 - Dexter",
+                                episode: "Episode 1",
+                                url: "https://f15.megacdn.co:2228/v3-hls-playback/147398c39dd0b7b8c82eec850485a291d323dd5daa584bb6d0affd537d2a9d60e6d12750dcdb961f523712b763693077b655e2ea68f3e71b883236c87553374eecdd1b74b2599b6281a722b3f76d4036683dc17b5633e4a8f80d61eb4a1f5544b681a97da320b1fb1a24393590bc0373d7c5c51fcd191002f96bfb526432db743912c9d8a76147b26bb57d1b675e5f039f63b25874bb7e6e5049e86428b144f94e10ee2e7faf664a78ed5ef3e21998e00277b641977fc4ff5a39655eea801cc1/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 2,
+                                name: "S01E02 - Crocodile",
+                                episode: "Episode 2",
+                                url: "https://f19.megacdn.co:2228/v3-hls-playback/7399d930baf4403a019dbdf9c1d1a76bbdc405bbdc486d6f793fb3460b728bd6a9e766ac762639a3fcfb34243cf7d0ef4ad0caf85e180643f022b50094985eb644d33a2f406380f83fa69bd62dcae3a45dab8105cf2bfb62141585f8c46481d9be932dcff1d76e5e6e328724ae130c06038c22a7bc0b6b6722d892d6d46af2843e76bcbfa31b4f1a277e704e5bc54c0d1108d993726d86fff854d842d4f9380ffae820ac71b58a428ece0c91cc33bc2da409d37ec18c8b2fd62bc88fa6b6a9f9/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 3,
+                                name: "S01E03 - Popping Cherry",
+                                episode: "Episode 3",
+                                url: "https://f13.megacdn.co:2228/v3-hls-playback/32663e542354f0cdf786eeff5eb5400dc386bf9a559918b5b6dfaa660bace814429da11b089703344d2d3a1bcb02d985066d6d769ef88f077aea95a15fab4935805dd4fccf80ecb1109e2029f680a1cb9adaf72fad0969f102efa3c6b78ace09d3c51e6cb81e662eff7dc33a2cda0b49efd31d381ea617c3e043a1fa972f195614e5bed32a6e3b0c34b12514ee9c986a5a1320abbc308b34da02773d246bc63960a473edc4ff89fa63a6a172b40768d3679c414f4042642d4aa9c8580aad1666/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 4,
+                                name: "S01E04 - Let's Give the Boy a Hand",
+                                episode: "Episode 4",
+                                url: "https://f13.megacdn.co:2228/v3-hls-playback/5629e474f650c9cd71a576335625ca3bfc3b8bc73a005159ab1349ed2cff2fab494f9cab003841931c8b4400cb3e3163f02720bf567bb4ddad6c433075577af79f22b51b0364bc606b028f8680e2dd2ab1706971516cf750a99f3c6ba0e4bafc5478e0a9b3c873b494c27c37203aa72fffbc02f15bf5e50788dc88fa2ea2608a61ece9e76754c3d92875fbaa709d91986e59f9e0b5fe3912a45bfa87cd3a45b6b1559e15b848e0c5d163fd9bf6b2438033fb0cc61ad28061aa17a70c0a1f5ca7/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 5,
+                                name: "S01E05 - Love American Style",
+                                episode: "Episode 5",
+                                url: "https://f21.megacdn.co:2228/v3-hls-playback/7a3740eb600310b551015fac768f6ffc02671e08876240126f9d00802759111a7797b6939aeb0dad8d9a04735cdef87122336516f2ab70a79c83941fffd38ae05bbc713c0fc6a6ebf984c97694889ffeddbdfe0e50eb67fb6f461956a54a97561ef7b4bb5d961b4a6d143b3471a9892d2b8b6c7a91d0f0f016c84c7f2b439c742745ff9009002f3ed5134ab6ba1c6985f10c3e838ac8ebd76a4046da06fb6ddbefa6bd2d40ef0bd63466eae16c4df3f1fba0c50e67d1199a2d6d57688756f8b3/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 6,
+                                name: "S01E06 - Return to Sender",
+                                episode: "Episode 6",
+                                url: "https://f19.megacdn.co:2228/v3-hls-playback/8a6e44dea65057dbbf4cfce0d39815670fcfaf20635a252b7bca12d7c367873c64f287eb7ffcb1a9722b7d3aca99dddbcbdb895e8ba18400ba832c56e9bcdc280da1db4fe8d1c6a4f1858f4216472f9b2deb894edb1ad4c655e0635a7abb81402342557d497933bc03652f5422908a4512249b0991c81dbdcbff0a893b5f33c307d4a541be341967f2c5ba91f95c7a691771111e1d1e48b87b1d750be245c72ac4e6182b98a71590843f66794eb0a32635e70ff17f9465ca76968a05ce451b0c/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 7,
+                                name: "S01E07 - Circle of Friends",
+                                episode: "Episode 7",
+                                url: "https://f21.megacdn.co:2228/v3-hls-playback/43012e85caeeaa6dbd78d6fb288704d04a82da42766640a9af7ef983765a27a4398e864d11c79569b09062daa51d604bd9d6c7966a72f441c4882fc92fb3a234034310695b31864ba180fee742cd94c769953f635664ef34bf4301aa8b794416e615d4f13c16e8c832d5e5f14ffd24d8e7de585486f05a7e7e1f4f02bc583894c7acff5ab77b5945a1a926090b4f274ff46bff7adf18181add655f8bf93be4b5dfee47afd47218fec4d7a79c600814a3418931bca99bace27e63f2cc81517356/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 8,
+                                name: "S01E08 - Shrink Wrap",
+                                episode: "Episode 8",
+                                url: "https://f17.megacdn.co:2228/v3-hls-playback/b2243c99588a745fc1b4f0a8f7487c6fbd9b2a1444a98f3457dde26d801560d9117d05def15bec0163a72c9dcb00cc7778499979e8fa7edb2834a5fd6b65e20942c518de063070c960ad191d7d6f51c46e324431832ed8de6f11d9adaf700d2ed030a5cfdbef713e2b1d39ca71b671a3dba7cc227d59b45443e1b774dad8f5a2eea3d03e9feb6b1834396907fedfe6af42087dac558d5d084f225672a72c222f18f66a72f19f7e64fb6f5e25170cb3698d1cf91f86cc00bb504ba93d13a9cb2b/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 9,
+                                name: "S01E09 - Father Knows Best",
+                                episode: "Episode 9",
+                                url: "https://f13.megacdn.co:2228/v3-hls-playback/3ceea138808ae4c990c68fdf609a20a0c9b4f087f71e31711057cae9cdfe3532277a3dac0d878d22a0e04ebf6995897712ef133bbc15fb7d57deae86a2c3d368c6d1542b93055eb370f34432053d39622dd907260f1bb9fab641fd48527aa533db1419ebc8729021faa9289ce63edd1817d39b323ab19957f416ee5ecd7bc9a2b98084ff24cfe5bf0777dd400e88ce2e497097dc3a93863508fc0385d5c3dd198f2c61a5efc97c4a8c11f0032dd029d06139201c49a8e83c30af1d54c33a3b22/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 10,
+                                name: "S01E10 - Seeing Red",
+                                episode: "Episode 10",
+                                url: "https://f15.megacdn.co:2228/v3-hls-playback/bd31a57e6be2241e314f9fcd8652db20ec1396af7da58c00b7036abcb43982c734216ab08b10786504059d3d4177ffb0f2d8edd8061400d156efcdd1bfeda830aaea66d71ac6a92c390dafeef466e8dcfa3dc730c7ea70e006b2902b484571517c9c636d3abbf0efeec35e979bc5b6ba376bd9678917017d080f2f8ac08848bcaeedc700028ed95598985f3ee2362986a4f0500ce59dfd952443490b794f5fda8f7df9fbeb4f407ba88534839ad1ba14fdb190a4ee4928125083c57806eac63c/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 11,
+                                name: "S01E11 - Truth Be Told",
+                                episode: "Episode 11",
+                                url: "https://f13.megacdn.co:2228/v3-hls-playback/202142e4c7217e160d3f7d55cd7f0b7be6a05ad48d462e7ceb093b2e04628cafb02b8db4a7ce5ddfaab26341cb506e2df9ab4b19aa683a988beaec40774249e3ac9b3869d1806c1a06fa01281d52b9dc1600b715a0f3e4336869b265fc2ed92ba6f390b4ed918a0211baa80594848207bf4f707d9dfd56438665fa0d3f1b8df641e8e3a02eb5f229f031765770112feb5fe8b03ed0a363857a9848ea46eb2cb34ca07f24f16d30f376b16d62de91508c8106e6fd7870dcd89fb6c3323016f088/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 12,
+                                name: "S01E12 - Born Free",
+                                episode: "Episode 12",
+                                url: "https://f17.megacdn.co:2228/v3-hls-playback/0e459afbd375f2b5ffa6544b166468b8d7a81f6d7866ef3aa74c4292298fd5acb7309be31a525da42d116f1ba46a7e17ffc81306acf81ebd8e45fa11e499934d479895a14c9c53bcf7c2088487d45fb5f12349344dfb0c451a5e0a24d843924036c9704c1b7e5bacd8edf40fe1031150471a9344ba3255d1d1ccc6140e67e6cbf64ef9802c44581e593daea64c7b1cfc18f08aa4d749990dfcd5abb0bf66a88e20d5c375aaec01434fea3877136194197b73d840fa3bdfca820e4e600acfc9b4/1080/index.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                        ]
+                    },
+                    2: {
+                        episodes: [
+                            {
+                                id: 13,
+                                name: "S02E01 - It's Alive!",
+                                episode: "Episode 1",
+                                url: "https://example.com/dexter/s02e01.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 14,
+                                name: "S02E02 - Waiting to Exhale",
+                                episode: "Episode 2",
+                                url: "https://example.com/dexter/s02e02.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            // Add more episodes for season 2
+                        ]
+                    }
+                }
             },
-            {
-                id: 2,
-                name: "S01E02",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f19.megacdn.co:2228/v3-hls-playback/7399d930baf4403a019dbdf9c1d1a76bbdc405bbdc486d6f793fb3460b728bd6a9e766ac762639a3fcfb34243cf7d0ef4ad0caf85e180643f022b50094985eb644d33a2f406380f83fa69bd62dcae3a45dab8105cf2bfb62141585f8c46481d9be932dcff1d76e5e6e328724ae130c06038c22a7bc0b6b6722d892d6d46af2843e76bcbfa31b4f1a277e704e5bc54c0d1108d993726d86fff854d842d4f9380ffae820ac71b58a428ece0c91cc33bc2da409d37ec18c8b2fd62bc88fa6b6a9f9/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
+            night_manager: {
+                name: "NIGHT MANAGER",
+                icon: "🌃",
+                seasons: {
+                    1: {
+                        episodes: [
+                            {
+                                id: 101,
+                                name: "S01E01 - Pilot",
+                                episode: "Episode 1",
+                                url: "https://example.com/night-manager/s01e01.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 102,
+                                name: "S01E02 - The Village",
+                                episode: "Episode 2",
+                                url: "https://example.com/night-manager/s01e02.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            // Add more episodes for season 1
+                        ]
+                    },
+                    2: {
+                        episodes: [
+                            {
+                                id: 103,
+                                name: "S02E01 - New Beginnings",
+                                episode: "Episode 1",
+                                url: "https://example.com/night-manager/s02e01.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            {
+                                id: 104,
+                                name: "S02E02 - Complications",
+                                episode: "Episode 2",
+                                url: "https://example.com/night-manager/s02e02.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            // Add more episodes for season 2
+                        ]
+                    }
+                }
             },
-            {
-                id: 2,
-                name: "S01E03",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f13.megacdn.co:2228/v3-hls-playback/32663e542354f0cdf786eeff5eb5400dc386bf9a559918b5b6dfaa660bace814429da11b089703344d2d3a1bcb02d985066d6d769ef88f077aea95a15fab4935805dd4fccf80ecb1109e2029f680a1cb9adaf72fad0969f102efa3c6b78ace09d3c51e6cb81e662eff7dc33a2cda0b49efd31d381ea617c3e043a1fa972f195614e5bed32a6e3b0c34b12514ee9c986a5a1320abbc308b34da02773d246bc63960a473edc4ff89fa63a6a172b40768d3679c414f4042642d4aa9c8580aad1666/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
+            breaking_bad: {
+                name: "BREAKING BAD",
+                icon: "🧪",
+                seasons: {
+                    1: {
+                        episodes: [
+                            {
+                                id: 201,
+                                name: "S01E01 - Pilot",
+                                episode: "Episode 1",
+                                url: "https://example.com/breaking-bad/s01e01.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            // Add more episodes
+                        ]
+                    }
+                }
             },
-             {
-                id: 2,
-                name: "S01E04",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f13.megacdn.co:2228/v3-hls-playback/5629e474f650c9cd71a576335625ca3bfc3b8bc73a005159ab1349ed2cff2fab494f9cab003841931c8b4400cb3e3163f02720bf567bb4ddad6c433075577af79f22b51b0364bc606b028f8680e2dd2ab1706971516cf750a99f3c6ba0e4bafc5478e0a9b3c873b494c27c37203aa72fffbc02f15bf5e50788dc88fa2ea2608a61ece9e76754c3d92875fbaa709d91986e59f9e0b5fe3912a45bfa87cd3a45b6b1559e15b848e0c5d163fd9bf6b2438033fb0cc61ad28061aa17a70c0a1f5ca7/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-            {
-                id: 2,
-                name: "S01E05",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f21.megacdn.co:2228/v3-hls-playback/7a3740eb600310b551015fac768f6ffc02671e08876240126f9d00802759111a7797b6939aeb0dad8d9a04735cdef87122336516f2ab70a79c83941fffd38ae05bbc713c0fc6a6ebf984c97694889ffeddbdfe0e50eb67fb6f461956a54a97561ef7b4bb5d961b4a6d143b3471a9892d2b8b6c7a91d0f0f016c84c7f2b439c742745ff9009002f3ed5134ab6ba1c6985f10c3e838ac8ebd76a4046da06fb6ddbefa6bd2d40ef0bd63466eae16c4df3f1fba0c50e67d1199a2d6d57688756f8b3/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-            {
-                id: 2,
-                name: "S01E06",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f19.megacdn.co:2228/v3-hls-playback/8a6e44dea65057dbbf4cfce0d39815670fcfaf20635a252b7bca12d7c367873c64f287eb7ffcb1a9722b7d3aca99dddbcbdb895e8ba18400ba832c56e9bcdc280da1db4fe8d1c6a4f1858f4216472f9b2deb894edb1ad4c655e0635a7abb81402342557d497933bc03652f5422908a4512249b0991c81dbdcbff0a893b5f33c307d4a541be341967f2c5ba91f95c7a691771111e1d1e48b87b1d750be245c72ac4e6182b98a71590843f66794eb0a32635e70ff17f9465ca76968a05ce451b0c/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-            {
-                id: 2,
-                name: "S01E07",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f21.megacdn.co:2228/v3-hls-playback/43012e85caeeaa6dbd78d6fb288704d04a82da42766640a9af7ef983765a27a4398e864d11c79569b09062daa51d604bd9d6c7966a72f441c4882fc92fb3a234034310695b31864ba180fee742cd94c769953f635664ef34bf4301aa8b794416e615d4f13c16e8c832d5e5f14ffd24d8e7de585486f05a7e7e1f4f02bc583894c7acff5ab77b5945a1a926090b4f274ff46bff7adf18181add655f8bf93be4b5dfee47afd47218fec4d7a79c600814a3418931bca99bace27e63f2cc81517356/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-             {
-                id: 2,
-                name: "S01E08",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f17.megacdn.co:2228/v3-hls-playback/b2243c99588a745fc1b4f0a8f7487c6fbd9b2a1444a98f3457dde26d801560d9117d05def15bec0163a72c9dcb00cc7778499979e8fa7edb2834a5fd6b65e20942c518de063070c960ad191d7d6f51c46e324431832ed8de6f11d9adaf700d2ed030a5cfdbef713e2b1d39ca71b671a3dba7cc227d59b45443e1b774dad8f5a2eea3d03e9feb6b1834396907fedfe6af42087dac558d5d084f225672a72c222f18f66a72f19f7e64fb6f5e25170cb3698d1cf91f86cc00bb504ba93d13a9cb2b/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-            {
-                id: 2,
-                name: "S01E09",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f13.megacdn.co:2228/v3-hls-playback/3ceea138808ae4c990c68fdf609a20a0c9b4f087f71e31711057cae9cdfe3532277a3dac0d878d22a0e04ebf6995897712ef133bbc15fb7d57deae86a2c3d368c6d1542b93055eb370f34432053d39622dd907260f1bb9fab641fd48527aa533db1419ebc8729021faa9289ce63edd1817d39b323ab19957f416ee5ecd7bc9a2b98084ff24cfe5bf0777dd400e88ce2e497097dc3a93863508fc0385d5c3dd198f2c61a5efc97c4a8c11f0032dd029d06139201c49a8e83c30af1d54c33a3b22/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-             {
-                id: 2,
-                name: "S01E10",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f15.megacdn.co:2228/v3-hls-playback/bd31a57e6be2241e314f9fcd8652db20ec1396af7da58c00b7036abcb43982c734216ab08b10786504059d3d4177ffb0f2d8edd8061400d156efcdd1bfeda830aaea66d71ac6a92c390dafeef466e8dcfa3dc730c7ea70e006b2902b484571517c9c636d3abbf0efeec35e979bc5b6ba376bd9678917017d080f2f8ac08848bcaeedc700028ed95598985f3ee2362986a4f0500ce59dfd952443490b794f5fda8f7df9fbeb4f407ba88534839ad1ba14fdb190a4ee4928125083c57806eac63c/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-             {
-                id: 2,
-                name: "S01E08",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f13.megacdn.co:2228/v3-hls-playback/202142e4c7217e160d3f7d55cd7f0b7be6a05ad48d462e7ceb093b2e04628cafb02b8db4a7ce5ddfaab26341cb506e2df9ab4b19aa683a988beaec40774249e3ac9b3869d1806c1a06fa01281d52b9dc1600b715a0f3e4336869b265fc2ed92ba6f390b4ed918a0211baa80594848207bf4f707d9dfd56438665fa0d3f1b8df641e8e3a02eb5f229f031765770112feb5fe8b03ed0a363857a9848ea46eb2cb34ca07f24f16d30f376b16d62de91508c8106e6fd7870dcd89fb6c3323016f088/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-            {
-                id: 2,
-                name: "S01E12",
-                icon: "",
-                type: "DEXTER 1-8",
-                url: "https://f17.megacdn.co:2228/v3-hls-playback/0e459afbd375f2b5ffa6544b166468b8d7a81f6d7866ef3aa74c4292298fd5acb7309be31a525da42d116f1ba46a7e17ffc81306acf81ebd8e45fa11e499934d479895a14c9c53bcf7c2088487d45fb5f12349344dfb0c451a5e0a24d843924036c9704c1b7e5bacd8edf40fe1031150471a9344ba3255d1d1ccc6140e67e6cbf64ef9802c44581e593daea64c7b1cfc18f08aa4d749990dfcd5abb0bf66a88e20d5c375aaec01434fea3877136194197b73d840fa3bdfca820e4e600acfc9b4/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-            
-            {
-                id: 3,
-                name: "S01E01",
-                icon: "",
-                type: "MAN VS BABY",
-                url: "https://f17.megacdn.co:2228/v3-hls-playback/860038c24045c836f987e10486e3abc2bab9d16a9460154ae6a7be47a44871efb715d6c312406659760b638f6bf99c53aa7f074f1ccc7d64e6f3cca14f3b1013ea7d6e5c6422095dc34c73b4697645e010d7c3794e5cf355ac718dbaa128d601516df9d38af9d1acb1acf4d081305c797ca8c134bf78ef77e6d20beec28c479b5ad11d0feab9f50daafe4cbbebc263cb207fcdf8317675285db13c2639379cc75fff3fc62e38b2fc4089f59c2cf7732e6f29e91f1993a77b5de27ee7241eb777/1080/index.m3u8",
-                backupUrls: [
-                    ""
-                ],
-                optimized: true
-            },
-        ];
+            game_of_thrones: {
+                name: "GAME OF THRONES",
+                icon: "⚔️",
+                seasons: {
+                    1: {
+                        episodes: [
+                            {
+                                id: 301,
+                                name: "S01E01 - Winter Is Coming",
+                                episode: "Episode 1",
+                                url: "https://example.com/got/s01e01.m3u8",
+                                backupUrls: [],
+                                optimized: true
+                            },
+                            // Add more episodes
+                        ]
+                    }
+                }
+            }
+        };
 
         // DOM elements
-        const streamsContainer = document.getElementById('streamsContainer');
+        const seriesContainer = document.getElementById('seriesContainer');
         const fullscreenPlayer = document.getElementById('fullscreenPlayer');
         const streamFrame = document.getElementById('streamFrame');
         const playerTitle = document.getElementById('playerTitle');
@@ -775,7 +852,7 @@
         const streamLoading = document.getElementById('streamLoading');
         const connectionStatus = document.getElementById('connectionStatus');
         const refreshStream = document.getElementById('refreshStream');
-        const streamCount = document.getElementById('streamCount');
+        const seriesCount = document.getElementById('seriesCount');
         const loadTime = document.getElementById('loadTime');
         const activeViewers = document.getElementById('activeViewers');
         const cdnStatus = document.getElementById('cdnStatus');
@@ -785,6 +862,8 @@
         let currentStream = null;
         let currentQuality = 'auto';
         let connectionSpeed = 'good';
+        let currentSeries = 'dexter';
+        let currentSeason = 1;
 
         // Test connection speed
         async function testConnectionSpeed() {
@@ -850,70 +929,134 @@
             }, 5000);
         }
 
-        // Initialize streams display with performance optimizations
-        function displayStreams(filter = 'all') {
-            const filteredStreams = filter === 'all'
-                ? streams
-                : streams.filter(stream => stream.type === filter);
+        // Display series with seasons and episodes
+        function displaySeries(seriesKey) {
+            currentSeries = seriesKey;
+            const series = seriesData[seriesKey];
+            if (!series) return;
            
-            streamsContainer.innerHTML = '';
+            seriesContainer.innerHTML = '';
            
-            if (filteredStreams.length === 0) {
-                streamsContainer.innerHTML = '<div class="no-streams">No streams found for this category. Try another filter.</div>';
+            const seriesCategory = document.createElement('div');
+            seriesCategory.className = 'series-category';
+           
+            seriesCategory.innerHTML = `
+                <div class="category-title">
+                    <i class="fas fa-tv"></i> ${series.name} ${series.icon}
+                </div>
+                <div class="season-selector" id="seasonSelector">
+                    <!-- Seasons will be inserted here -->
+                </div>
+                <div class="episodes-grid" id="episodesGrid">
+                    <!-- Episodes will be inserted here -->
+                </div>
+            `;
+           
+            seriesContainer.appendChild(seriesCategory);
+           
+            // Display seasons
+            displaySeasons(series.seasons);
+           
+            // Update stats
+            seriesCount.textContent = Object.keys(seriesData).length;
+            updateActiveViewers();
+        }
+
+        // Display seasons for current series
+        function displaySeasons(seasons) {
+            const seasonSelector = document.getElementById('seasonSelector');
+            const episodesGrid = document.getElementById('episodesGrid');
+           
+            seasonSelector.innerHTML = '';
+            episodesGrid.innerHTML = '';
+           
+            // Create season buttons
+            Object.keys(seasons).forEach(seasonNum => {
+                const seasonBtn = document.createElement('button');
+                seasonBtn.className = `season-btn ${parseInt(seasonNum) === currentSeason ? 'active' : ''}`;
+                seasonBtn.textContent = `Season ${seasonNum}`;
+                seasonBtn.dataset.season = seasonNum;
+               
+                seasonBtn.addEventListener('click', () => {
+                    currentSeason = parseInt(seasonNum);
+                    // Update active button
+                    document.querySelectorAll('.season-btn').forEach(btn => btn.classList.remove('active'));
+                    seasonBtn.classList.add('active');
+                    // Display episodes for this season
+                    displayEpisodes(seasons[seasonNum].episodes);
+                });
+               
+                seasonSelector.appendChild(seasonBtn);
+            });
+           
+            // Display episodes for current season
+            if (seasons[currentSeason]) {
+                displayEpisodes(seasons[currentSeason].episodes);
+            }
+        }
+
+        // Display episodes for current season
+        function displayEpisodes(episodes) {
+            const episodesGrid = document.getElementById('episodesGrid');
+            episodesGrid.innerHTML = '';
+           
+            if (episodes.length === 0) {
+                episodesGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray);">No episodes available for this season.</div>';
                 return;
             }
            
-            filteredStreams.forEach(stream => {
-                const streamCard = document.createElement('div');
-                streamCard.className = 'stream-card';
-                streamCard.dataset.id = stream.id;
+            episodes.forEach(episode => {
+                const episodeCard = document.createElement('div');
+                episodeCard.className = 'episode-card';
+                episodeCard.dataset.id = episode.id;
                
-                const isOptimized = stream.optimized ? '<div class="stream-badge">FAST</div>' : '';
-               
-                streamCard.innerHTML = `
-                    ${isOptimized}
-                    <div class="stream-icon">${stream.icon}</div>
-                    <div class="stream-info">
-                        <div class="stream-name">
-                            ${stream.name}
-                            <span class="stream-type">${stream.type.replace('_', ' ').toUpperCase()}</span>
-                        </div>
-                        <div class="stream-meta">
-                            <span><i class="fas fa-wifi"></i> Optimized</span>
-                            <span><i class="fas fa-bolt"></i> Instant Play</span>
+                episodeCard.innerHTML = `
+                    <div class="episode-number">${episode.episode}</div>
+                    <div class="episode-info">
+                        <div class="episode-name">${episode.name}</div>
+                        <div class="episode-meta">
+                            <span><i class="fas fa-wifi"></i> HD</span>
+                            <span><i class="fas fa-clock"></i> 45min</span>
                         </div>
                     </div>
-                    <button class="stream-play-btn"
-                            data-id="${stream.id}"
-                            data-name="${stream.name}"
-                            data-urls='${JSON.stringify([stream.url, ...stream.backupUrls])}'>
-                        <i class="fas fa-play"></i> PLAY INSTANTLY
+                    <button class="episode-play-btn"
+                            data-id="${episode.id}"
+                            data-name="${episode.name}"
+                            data-urls='${JSON.stringify([episode.url, ...episode.backupUrls])}'>
+                        <i class="fas fa-play"></i> PLAY
                     </button>
                 `;
                
-                streamsContainer.appendChild(streamCard);
+                episodesGrid.appendChild(episodeCard);
                
                 // Preload this stream in background
-                if (stream.optimized) {
-                    setTimeout(() => preloadStream(stream.url), 100);
+                if (episode.optimized) {
+                    setTimeout(() => preloadStream(episode.url), 100);
                 }
             });
            
-            // Update stats
-            streamCount.textContent = filteredStreams.length;
-            updateActiveViewers();
-           
             // Add event listeners
-            setupStreamEventListeners();
+            setupEpisodeEventListeners();
         }
 
         // Open full-screen player with performance optimizations
-        async function openFullscreenPlayer(streamId, streamName, urls) {
-            const stream = streams.find(s => s.id === streamId);
-            if (!stream) return;
+        async function openFullscreenPlayer(episodeId, episodeName, urls) {
+            const series = seriesData[currentSeries];
+            let episode = null;
            
-            currentStream = stream;
-            playerTitle.textContent = `${streamName} • UltraFast Stream`;
+            // Find the episode in the current series
+            for (const seasonNum in series.seasons) {
+                const found = series.seasons[seasonNum].episodes.find(e => e.id === episodeId);
+                if (found) {
+                    episode = found;
+                    break;
+                }
+            }
+           
+            if (!episode) return;
+           
+            currentStream = episode;
+            playerTitle.textContent = `${episodeName} • ${series.name}`;
             fullscreenPlayer.style.display = 'flex';
             document.body.style.overflow = 'hidden';
            
@@ -996,8 +1139,6 @@
             }, 1000);
         }
 
-       
-
         // Update active viewers count
         function updateActiveViewers() {
             // Simulate random viewers for demo
@@ -1006,44 +1147,44 @@
             activeViewers.textContent = totalViewers;
         }
 
-        // Setup event listeners
-        function setupStreamEventListeners() {
+        // Setup episode event listeners
+        function setupEpisodeEventListeners() {
             // Play buttons
-            document.querySelectorAll('.stream-play-btn').forEach(button => {
+            document.querySelectorAll('.episode-play-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const streamId = parseInt(button.dataset.id);
-                    const streamName = button.dataset.name;
+                    const episodeId = parseInt(button.dataset.id);
+                    const episodeName = button.dataset.name;
                     const urls = JSON.parse(button.dataset.urls);
                    
-                    openFullscreenPlayer(streamId, streamName, urls);
+                    openFullscreenPlayer(episodeId, episodeName, urls);
                 });
             });
            
-            // Stream cards
-            document.querySelectorAll('.stream-card').forEach(card => {
+            // Episode cards
+            document.querySelectorAll('.episode-card').forEach(card => {
                 card.addEventListener('click', (e) => {
-                    if (!e.target.classList.contains('stream-play-btn')) {
-                        const playBtn = card.querySelector('.stream-play-btn');
-                        const streamId = parseInt(playBtn.dataset.id);
-                        const streamName = playBtn.dataset.name;
+                    if (!e.target.classList.contains('episode-play-btn')) {
+                        const playBtn = card.querySelector('.episode-play-btn');
+                        const episodeId = parseInt(playBtn.dataset.id);
+                        const episodeName = playBtn.dataset.name;
                         const urls = JSON.parse(playBtn.dataset.urls);
                        
-                        openFullscreenPlayer(streamId, streamName, urls);
+                        openFullscreenPlayer(episodeId, episodeName, urls);
                     }
                 });
             });
         }
 
-        // Setup filters
+        // Setup series filters
         function setupFilters() {
             filterButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
                    
-                    const filter = button.dataset.filter;
-                    displayStreams(filter);
+                    const seriesKey = button.dataset.series;
+                    displaySeries(seriesKey);
                 });
             });
         }
@@ -1057,14 +1198,13 @@
             // Test connection
             await testConnectionSpeed();
            
-            // Display streams
-            displayStreams();
+            // Display initial series (Dexter)
+            displaySeries('dexter');
             setupFilters();
            
             // Setup player controls
             closePlayer.addEventListener('click', closeFullscreenPlayer);
             refreshStream.addEventListener('click', refreshCurrentStream);
-           
            
             // Close player with Escape key
             document.addEventListener('keydown', (e) => {
@@ -1077,8 +1217,12 @@
            
             // Preload all streams gradually
             setTimeout(() => {
-                streams.forEach(stream => {
-                    if (stream.optimized) preloadStream(stream.url);
+                Object.values(seriesData).forEach(series => {
+                    Object.values(series.seasons).forEach(season => {
+                        season.episodes.forEach(episode => {
+                            if (episode.optimized) preloadStream(episode.url);
+                        });
+                    });
                 });
             }, 1000);
            
